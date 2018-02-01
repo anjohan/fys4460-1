@@ -59,7 +59,7 @@ for i in range(num_frames):
         hist += np.histogram(v, bin_edges)[0]
     norm = np.linalg.norm(hist)
     correlation[i] = np.dot(hist / norm, hist_final)
-    if i == 0 or i == num_frames // 2 or i == num_frames - 1:
+    if i == 0 or i == num_frames // 5 or i == num_frames - 1:
         num_plots += 1
         np.savetxt("data/velocity_distribution%d.dat" % num_plots,
                    np.array([bin_mids, hist / 3]).transpose())

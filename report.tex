@@ -86,7 +86,7 @@
 \allowdisplaybreaks[4]
 \fancyhf{}
 
-\rhead{Kandidatnummer: \num{15245}}
+\rhead{Project 1}
 \rfoot{Page~\thepage{} of~\pageref{LastPage}}
 \lhead{FYS4460}
 
@@ -148,6 +148,46 @@ I have used the following workflow to see how the velocity distribution evolves 
 When calculating the histograms, I have made sure the same bins are used for all frames by first finding the maximum velocity attained by any atom during the simulation, and then using equally sized bins in the range \(\qty[-v_{\max},v_{\max}]\). One histogram is computed for each direction, and then the average of these is taken.
 
 The correlation is computed by normalising the histograms and taking the dot product with the histogram computed from the final frame. As the velocity distribution approaches the final distribution, the correlation should approach 1.
+
+From \vref{fig:distribution} it is clear that the velocity distribution rapidly changes from a uniform to a gaussian shape. \Vref{fig:correlation} indicates that this happens exponentially, i.e.
+\[
+    C(t) = 1-C_0\exp{-t/\tau}\,,
+\]
+where \(C(t)\) is the correlation, \(C_0\) is the initial correlation and \(\tau\) is a time constant. If this is the case,
+\[
+    \ln(1-C) = \ln(C_0\exp{-t/\tau}) = \ln(C_0) - t/\tau\,
+\]
+so when plotted on a logarithmic scale, \(1-C(t)\) should be a linear function with slope \(-1/\tau\).
+
+\begin{figure}[tbh]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle, axis y discontinuity=crunch,
+            ymin=0.9, enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
+            xlabel={\(t\ \qty[\si{\pico\s}]\)}, ylabel=Correlation]
+            \addplot+[mark=none,] table[x expr={\thisrowno{0}/1000}] {a/data/velocity_correlation.dat};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Correlation of the velocity distribution as a function of time.}\label{fig:correlation}
+\end{figure}
+\begin{figure}[tbh]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle,
+            enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
+            xlabel={\(t\ \qty[\si{\angstrom\per\femto\s}]\)}, ylabel=Distribution,
+            legend style={draw=none}, legend cell align=left,
+            ]
+            \addplot+[mark=none] table {a/data/velocity_distribution1.dat};
+            \addlegendentry{Initial};
+            \addplot+[mark=none] table {a/data/velocity_distribution2.dat};
+            \addlegendentry{\(\frac{1}{5}\) of simulation}
+            \addplot+[mark=none] table {a/data/velocity_distribution3.dat};
+            \addlegendentry{Final}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Distribution of the particle velocities in the initial and final configurations, as well as after one fifth of the simulation time.}\label{fig:distribution}
+\end{figure}
 
 
 
