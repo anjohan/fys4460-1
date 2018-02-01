@@ -1,5 +1,6 @@
 import ovito
 from units import units
+from math import e
 
 import numpy as np
 import re
@@ -63,6 +64,12 @@ for i in range(num_frames):
         num_plots += 1
         np.savetxt("data/velocity_distribution%d.dat" % num_plots,
                    np.array([bin_mids, hist / 3]).transpose())
+
+one_minus_C0 = 1 - correlation[0]
+for i in range(num_frames):
+    if (1 - correlation[i]) / one_minus_C0 < 1 / e:
+        np.savetxt("data/tau.dat", [t[i] / 1000])
+        break
 
 np.savetxt("data/velocity_correlation.dat",
            np.array([t, correlation]).transpose())

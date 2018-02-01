@@ -42,11 +42,11 @@
 % \newcommand{\oppg}[1]{\section*{Oppgave #1}\addcontentsline{toc}{section}{Oppgave #1}\refstepcounter{section}\label{oppg#1}}
 
 \labelformat{section}{#1}
-\labelformat{subsection}{deloppgave~#1}
-\labelformat{subsubsection}{avsnitt~#1}
-\labelformat{equation}{likning~(#1)}
-\labelformat{figure}{figur~#1}
-\labelformat{table}{tabell~#1}
+\labelformat{subsection}{exercise~#1}
+\labelformat{subsubsection}{paragraph~#1}
+\labelformat{equation}{equation~(#1)}
+\labelformat{figure}{figure~#1}
+\labelformat{table}{table~#1}
 
 \renewcommand{\footrulewidth}{\headrulewidth}
 
@@ -79,7 +79,7 @@
 
 \sisetup{detect-all}
 \sisetup{exponent-product = \cdot, output-product = \cdot,per-mode=symbol}
-\sisetup{output-decimal-marker={,}}
+% \sisetup{output-decimal-marker={,}}
 \sisetup{round-mode = off, round-precision=3}
 \sisetup{number-unit-product = \ }
 
@@ -98,7 +98,7 @@
 \newcommand{\matrise}[1]{\begin{pmatrix}#1\end{pmatrix}}
 
 
-\pgfplotstableset{use comma, 1000 sep={\,},
+\pgfplotstableset{1000 sep={\,},
                       assign column name/.style={/pgfplots/table/column name={\multicolumn{1}{c}{#1}}},
                       every head row/.style={before row=\toprule,after row=\midrule},
                       every last row/.style={after row=\bottomrule},
@@ -107,6 +107,8 @@
                       columns/logN/.style={column name={\(\log(N)\)}},
                       columns/logn/.style={column name={\(\log(n^*)\)}}
                       }
+
+\newread\infile
 
 %start
 \begin{document}
@@ -155,22 +157,23 @@ From \vref{fig:distribution} it is clear that the velocity distribution rapidly 
 \]
 where \(C(t)\) is the correlation, \(C_0\) is the initial correlation and \(\tau\) is a time constant. If this is the case,
 \[
-    \ln(1-C) = \ln(C_0\exp{-t/\tau}) = \ln(C_0) - t/\tau\,
+    \ln(1-C) = \ln(C_0\exp{-t/\tau}) = \ln(C_0) - t/\tau\,,
 \]
-so when plotted on a logarithmic scale, \(1-C(t)\) should be a linear function with slope \(-1/\tau\).
+so when plotted on a logarithmic scale, \(1-C(t)\) should be a linear function with slope \(-1/\tau\). The result is shown in~\vref{fig:logcorrelation}, and while the noise increases as the correlation approaches unity, it is clear from the first half of the graph that the trend is linear, confirming the exponential approach to \(1\).
 
-\begin{figure}[tbh]
-    \centering
-    \begin{tikzpicture}
-        \begin{axis}[thick,axis lines=middle, axis y discontinuity=crunch,
-            ymin=0.9, enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
-            xlabel={\(t\ \qty[\si{\pico\s}]\)}, ylabel=Correlation]
-            \addplot+[mark=none,] table[x expr={\thisrowno{0}/1000}] {a/data/velocity_correlation.dat};
-        \end{axis}
-    \end{tikzpicture}
-    \caption{Correlation of the velocity distribution as a function of time.}\label{fig:correlation}
-\end{figure}
-\begin{figure}[tbh]
+The time constant, \(\tau\), can thus be estimated by picking out the linear part of the data in \vref{fig:logcorrelation} and finding the slope. While this sounds simple, picking out a linear bit of a graph is hard to program. Fortunately,
+\[
+    C(\tau) = 1-C_0\exp{-\tau/\tau} = 1-C_0/\mathrm{e} \implies 1-C(\tau)=C_0/\mathrm{e} \implies \frac{1-C(\tau)}{1-C(0)} = \frac{1}{\mathrm{e}}\,,
+\]
+so the time constant can also be found by checking when \(1-C\) has reached \(1/\mathrm{e}\) of its initial value, which is very simple to program. The result is
+\openin\infile=a/data/tau.dat
+\read\infile to \timeconstant
+\closein\infile
+\[
+    \tau = \SI[round-mode=figures,round-precision=2]{\timeconstant}{\pico\s}\,.
+\]
+
+\begin{figure}[tbhp]
     \centering
     \begin{tikzpicture}
         \begin{axis}[thick,axis lines=middle,
@@ -186,7 +189,33 @@ so when plotted on a logarithmic scale, \(1-C(t)\) should be a linear function w
             \addlegendentry{Final}
         \end{axis}
     \end{tikzpicture}
-    \caption{Distribution of the particle velocities in the initial and final configurations, as well as after one fifth of the simulation time.}\label{fig:distribution}
+    \caption{Distribution of particle velocities in the initial and final configurations, as well as after one fifth of the simulation time. The shape transforms rapidly from uniform to gaussian.}\label{fig:distribution}
+\end{figure}
+\begin{figure}[tbh]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle, axis y discontinuity=crunch,
+            ymin=0.912, enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
+            xlabel={\(t\ \qty[\si{\pico\s}]\)}, ylabel=Correlation]
+            \addplot+[mark=none,] table[x expr={\thisrowno{0}/1000}] {a/data/velocity_correlation.dat};
+            \draw (axis cs:\timeconstant,0.895) coordinate (A);
+            \draw (axis cs:\timeconstant,0.99) coordinate (B);
+        \end{axis}
+        \draw[dashed] (B) -- (A) node[below] {\(\tau\)};
+    \end{tikzpicture}
+    \caption{Correlation of the velocity distribution as a function of time. The approach to \(1\) appears to be exponential, as confirmed by \vref{fig:logcorrelation}.}\label{fig:correlation}
+\end{figure}
+\begin{figure}[tbh]
+    \centering
+    \begin{tikzpicture}
+        \begin{semilogyaxis}[thick,axis y line=middle, axis x line=bottom,
+            ymin=0.00001,ymax=0.1,
+            enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
+            xlabel={\(t\ \qty[\si{\pico\s}]\)}, ylabel={\(1-C(t)\)}]
+            \addplot+[mark=none,] table[x expr={\thisrowno{0}/1000},y expr={1-\thisrowno{1}}] {a/data/velocity_correlation.dat};
+        \end{semilogyaxis}
+    \end{tikzpicture}
+    \caption{Deviation of the correlation from \(1\), plotted on a logarithmic scale. The linear trend of the first part indicates exponential decay.}\label{fig:logcorrelation}
 \end{figure}
 
 
