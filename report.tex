@@ -1,0 +1,155 @@
+\documentclass[11pt,british,a4paper]{report}
+\pdfobjcompresslevel=0
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[includeheadfoot,margin=0.8 in]{geometry}
+\usepackage{siunitx,physics,cancel,upgreek,varioref,listings,booktabs,pdfpages,ifthen,polynom,todonotes}
+%\usepackage{minted}
+\usepackage{mathtools,upgreek,bigints}
+\usepackage{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+%\usepackage{fouriernc}
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage{inconsolata}
+%\usepackage{eulervm}
+%\usepackage{fontspec}
+%\usepackage{unicode-math}
+%\setmainfont{Tex Gyre Pagella}
+%\setmathfont{Tex Gyre Pagella Math}
+\usepackage{fancyhdr}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+\usepackage{lastpage}
+\usepackage{microtype}
+\usepackage[linktoc=all, bookmarks=true, pdfauthor={Anders Johansson},pdftitle={FYS3110 Hjemmeeksamen}]{hyperref}
+\usepackage{tikz,pgfplots,pgfplotstable}
+\usepgfplotslibrary{colorbrewer}
+\pgfplotsset{cycle list/Set1}
+\usetikzlibrary{spy}
+\pgfplotsset{compat=1.8}
+\renewcommand{\CancelColor}{\color{red}}
+\let\oldexp=\exp
+\renewcommand{\exp}[1]{\mathrm{e}^{#1}}
+\renewcommand{\Re}[1]{\mathfrak{Re}\ifthenelse{\equal{#1}{}}{}{\left(#1\right)}}
+\renewcommand{\Im}[1]{\mathfrak{Im}\ifthenelse{\equal{#1}{}}{}{\left(#1\right)}}
+\renewcommand{\i}{\mathrm{i}}
+\newcommand{\tittel}[1]{\title{#1 \vspace{-7ex}}\author{}\date{}\maketitle\thispagestyle{fancy}\pagestyle{fancy}\setcounter{page}{1}}
+
+% \newcommand{\deloppg}[2][]{\subsection*{#2) #1}\addcontentsline{toc}{subsection}{#2)}\refstepcounter{subsection}\label{#2}}
+% \newcommand{\oppg}[1]{\section*{Oppgave #1}\addcontentsline{toc}{section}{Oppgave #1}\refstepcounter{section}\label{oppg#1}}
+
+\labelformat{section}{#1}
+\labelformat{subsection}{deloppgave~#1}
+\labelformat{subsubsection}{avsnitt~#1}
+\labelformat{equation}{likning~(#1)}
+\labelformat{figure}{figur~#1}
+\labelformat{table}{tabell~#1}
+
+\renewcommand{\footrulewidth}{\headrulewidth}
+
+%\setcounter{secnumdepth}{4}
+\renewcommand{\thesection}{Oppgave \arabic{section}}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection})}
+\renewcommand{\thesubsubsection}{\arabic{section}\alph{subsection}\roman{subsubsection})}
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{1em}
+
+\definecolor{bluekeywords}{rgb}{0.13,0.13,1}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{redstrings}{rgb}{0.9,0,0}
+\lstset{rangeprefix=\#/,
+    rangesuffix=/,
+    includerangemarker=false}
+\renewcommand{\lstlistingname}{Kodesnutt}
+\lstset{showstringspaces=false,
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{bluekeywords},
+    commentstyle=\color{greencomments},
+    numberstyle=\color{bluekeywords},
+    stringstyle=\color{redstrings},
+    breaklines=true,
+    texcl=true
+}
+\colorlet{DarkGrey}{white!20!black}
+\newcommand{\eqtag}[1]{\refstepcounter{equation}\tag{\theequation}\label{#1}}
+\hypersetup{hidelinks=True}
+
+\sisetup{detect-all}
+\sisetup{exponent-product = \cdot, output-product = \cdot,per-mode=symbol}
+\sisetup{output-decimal-marker={,}}
+\sisetup{round-mode = off, round-precision=3}
+\sisetup{number-unit-product = \ }
+
+\allowdisplaybreaks[4]
+\fancyhf{}
+
+\rhead{Kandidatnummer: \num{15245}}
+\rfoot{Page~\thepage{} of~\pageref{LastPage}}
+\lhead{FYS4460}
+
+%\definecolor{gronn}{rgb}{0.29, 0.33, 0.13}
+\definecolor{gronn}{rgb}{0, 0.5, 0}
+
+\newcommand{\husk}[2]{\tikz[baseline,remember picture,inner sep=0pt,outer sep=0pt]{\node[anchor=base] (#1) {\(#2\)};}}
+\newcommand{\artanh}[1]{\operatorname{artanh}{\qty(#1)}}
+\newcommand{\matrise}[1]{\begin{pmatrix}#1\end{pmatrix}}
+
+
+\pgfplotstableset{use comma, 1000 sep={\,},
+                      assign column name/.style={/pgfplots/table/column name={\multicolumn{1}{c}{#1}}},
+                      every head row/.style={before row=\toprule,after row=\midrule},
+                      every last row/.style={after row=\bottomrule},
+                      columns/n/.style={column name={\(n^*\)},column type={r}},
+                      columns/N/.style={column name={\(N\)},sci},
+                      columns/logN/.style={column name={\(\log(N)\)}},
+                      columns/logn/.style={column name={\(\log(n^*)\)}}
+                      }
+
+%start
+\begin{document}
+\title{FYS4460: Project 1}
+\author{Anders Johansson}
+%\maketitle
+
+\begin{titlepage}
+%\includegraphics[width=\textwidth]{fysisk.pdf}
+\vspace*{\fill}
+\begin{center}
+\textsf{
+    \Huge \textbf{Project 1}\\\vspace{0.5cm}
+    \Large \textbf{FYS4460 - Disordered systems and percolation}\\
+    \vspace{8cm}
+    Anders Johansson\\
+    \today\\
+}
+\vspace{1.5cm}
+\includegraphics{uio.pdf}\\
+\vspace*{\fill}
+\end{center}
+\end{titlepage}
+\null
+\pagestyle{empty}
+\newpage
+
+\pagestyle{fancy}
+\setcounter{page}{1}
+
+\subsection*{a)}
+I have used the following workflow to see how the velocity distribution evolves with time:
+\begin{itemize}
+    \item LAMMPs generates an fcc structure, and saves a data file.
+    \item A python script reads the data file, and replaces the velocities (which are zero) with uniformly distributed velocities in a specified range.
+    \item LAMMPs runs a simulation from the resulting data file.
+    \item A python script uses ovito to parse the simulation data, makes histograms for each saved frame and computes the correlation.
+\end{itemize}
+When calculating the histograms, I have made sure the same bins are used for all frames by first finding the maximum velocity attained by any atom during the simulation, and then using equally sized bins in the range \(\qty[-v_{\max},v_{\max}]\). One histogram is computed for each direction, and then the average of these is taken.
+
+The correlation is computed by normalising the histograms and taking the dot product with the histogram computed from the final frame. As the velocity distribution approaches the final distribution, the correlation should approach 1.
+
+
+
+
+\end{document}

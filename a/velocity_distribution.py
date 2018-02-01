@@ -44,7 +44,7 @@ hist_final = np.zeros(num_bins)
 
 for dim in dims:
     hist_final += np.histogram(eval("v%s_final" % dim), bin_edges)[0]
-hist_final /= 3 * np.linalg.norm(hist_final)
+hist_final /= np.linalg.norm(hist_final)
 
 correlation = np.zeros(num_frames)
 
@@ -57,13 +57,12 @@ for i in range(num_frames):
     for dim in dims:
         v = data.particle_properties["v" + dim] * units.v0
         hist += np.histogram(v, bin_edges)[0]
-    hist /= 3
     norm = np.linalg.norm(hist)
     correlation[i] = np.dot(hist / norm, hist_final)
     if i == 0 or i == num_frames // 2 or i == num_frames - 1:
         num_plots += 1
         np.savetxt("data/velocity_distribution%d.dat" % num_plots,
-                   np.array([bin_mids, hist]).transpose())
+                   np.array([bin_mids, hist / 3]).transpose())
 
 np.savetxt("data/velocity_correlation.dat",
            np.array([t, correlation]).transpose())
