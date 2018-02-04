@@ -173,12 +173,12 @@ so the time constant can also be found by checking when \(1-C\) has reached \(1/
     \tau = \SI[round-mode=figures,round-precision=2]{\timeconstant}{\pico\s}\,.
 \]
 
-\begin{figure}[tbhp]
+\begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
         \begin{axis}[thick,axis lines=middle,
             enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
-            xlabel={\(t\ \qty[\si{\angstrom\per\femto\s}]\)}, ylabel=Distribution,
+            xlabel={\(v\ \qty[\si{\angstrom\per\femto\s}]\)}, ylabel=Distribution,
             legend style={draw=none}, legend cell align=left,
             ]
             \addplot+[mark=none] table {a/data/velocity_distribution1.dat};
@@ -189,9 +189,9 @@ so the time constant can also be found by checking when \(1-C\) has reached \(1/
             \addlegendentry{Final}
         \end{axis}
     \end{tikzpicture}
-    \caption{Distribution of particle velocities in the initial and final configurations, as well as after one fifth of the simulation time. The shape transforms rapidly from uniform to gaussian.}\label{fig:distribution}
+    \caption{Distribution of particle velocities in the initial and final configurations, as well as after one fifth of the simulation time. The shape changes rapidly from uniform to gaussian.}\label{fig:distribution}
 \end{figure}
-\begin{figure}[tbh]
+\begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
         \begin{axis}[thick,axis lines=middle, axis y discontinuity=crunch,
@@ -205,7 +205,7 @@ so the time constant can also be found by checking when \(1-C\) has reached \(1/
     \end{tikzpicture}
     \caption{Correlation of the velocity distribution as a function of time. The approach to \(1\) appears to be exponential, as confirmed by \vref{fig:logcorrelation}.}\label{fig:correlation}
 \end{figure}
-\begin{figure}[tbh]
+\begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
         \begin{semilogyaxis}[thick,axis y line=middle, axis x line=bottom,
@@ -215,8 +215,107 @@ so the time constant can also be found by checking when \(1-C\) has reached \(1/
             \addplot+[mark=none,] table[x expr={\thisrowno{0}/1000},y expr={1-\thisrowno{1}}] {a/data/velocity_correlation.dat};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{Deviation of the correlation from \(1\), plotted on a logarithmic scale. The linear trend of the first part indicates exponential decay.}\label{fig:logcorrelation}
+    \caption{Deviation of the correlation from \(1\), plotted on a logarithmic scale. The linear trend of the first part indicates exponential decay. As the velocity distribution approaches the final distribution, the noise starts dominating the deviation.}\label{fig:logcorrelation}
 \end{figure}
+
+\openin\infile=b/data/firstdt.dat
+\read\infile to \firstdt
+\closein\infile
+\openin\infile=b/data/lastdt.dat
+\read\infile to \lastdt
+\closein\infile
+\subsection*{b)}
+In order to find the time dependence of the total energy (which should be constant in an NVE-system) as well as the fluctuations, I have made a simple python script which goes through a set of time steps and runs a LAMMPS script for each time step. Between the runs, the energy is read from the log file and the standard deviation is calculated.
+
+The time step starts at \(\Delta t = \num[round-mode=figures,round-precision=1]{\firstdt}t_0\), where \(t_0\) is the characteristic time for argon. As the time step is gradually increased, the system starts losing atoms, causing the simulation to crash. The largest time step used is \(\Delta t = \num[round-mode=figures,round-precision=2]{\lastdt}t_0\).
+
+As seen from \vref{fig:energy}, the energy conservation is much worse when a large time step is used. \Vref{fig:energystddev} is an attempt at quantifying the effect of the time step, but the results are hard to interpret.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle, enlarge x limits=0.05,
+                     enlarge y limits=0.10,
+                     axis y discontinuity=crunch, width=6in,height=3in,
+                     xlabel={\(t\ \qty[\si{\pico\s}]\)}, ylabel={\(E\ \qty[\si{\eV}]\)},
+                     xlabel style={anchor=north west}, ylabel style={anchor=east},
+                     legend style={draw=none}, legend cell align=left,
+                     ]
+                     \addplot+[mark=none] table[x expr={\thisrowno{0}/1000}] {b/data/Efirst.dat};
+                     \addlegendentry{\(\Delta t = \num[round-mode=figures,round-precision=2,scientific-notation=false]{\firstdt}t_0\)};
+                     \addplot+[mark=none] table[x expr={\thisrowno{0}/1000}] {b/data/Elast.dat};
+                     \addlegendentry{\(\Delta t = \num[round-mode=figures,round-precision=2,scientific-notation=false]{\lastdt}t_0\)};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Total energy as a function of time for the largest and smallest time steps used. It is clear that the energy conservation is better when a small time step is used.}
+    \label{fig:energy}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{semilogyaxis}[thick,axis y line=middle, axis x line=bottom,
+            ymin=0.0000001,
+            enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
+            xlabel={\(\Delta t/t_0\)}, ylabel={\(\sigma_E\ \qty[\si{\eV}]\)}]
+            \addplot+[mark=none,] table {b/data/stddev.dat};
+        \end{semilogyaxis}
+    \end{tikzpicture}
+    \caption{Standard deviation of the total energy as a function of the time step.}\label{fig:energystddev}
+\end{figure}
+
+\openin\infile=c/data/firstsize.dat
+\read\infile to \firstsize
+\closein\infile
+\openin\infile=c/data/lastsize.dat
+\read\infile to \lastsize
+\closein\infile
+\openin\infile=c/data/Lpower.dat
+\read\infile to \Lpower
+\closein\infile
+\subsection*{c)}
+In order to find the time dependence of the temperature as well as the fluctuations, I have made a simple python script which goes through a set of system sizes and runs a LAMMPS script for each system size. Between the runs, the temperature is read from the log file and the standard deviation is calculated.
+
+The size starts at \(L_x=L_y=L_z = \num{\firstsize}a\), where \(a\) is the chosen initial unit cell size for argon. The largest size used is \(L_x=L_y=L_z= \num{\lastsize}a\).
+
+\Vref*{fig:temp} shows the temperature as a function of time for the smallest and largest system sizes. While the equilibrium temperature and equilibration time are the same, the fluctuations are much greater when the system is smaller. \Vref{fig:tempstddev} shows the standard deviation as a function of system size. Note the logarithmic scale on both axes.
+
+The linear trend of \(\ln(\sigma_T)\) as a function of \(\ln(L)\) indicates that the fluctuations are proportional to some power of the system size, as
+\[
+    \ln(\sigma_T) = C\ln(L) + D = \ln(L^C) + D \implies \sigma_T = \exp{C\ln(L)+D}
+    = \exp{D}\qty(\exp{\ln(L)})^C = \exp{D}L^C \propto L^C\,.
+\]
+Numpy's polyfit function gives the result \(C=\num[round-mode=figures,round-precision=3]{\Lpower} \approx -4/3\).
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle, enlarge x limits=0.05,
+                     enlarge y limits=0.15,
+                     axis y discontinuity=crunch, width=6in,height=3in,
+                     xlabel={\(t\ \qty[\si{\pico\s}]\)}, ylabel={\(T\ \qty[\si{\kelvin}]\)},
+                     xlabel style={anchor=north west}, ylabel style={anchor=east},
+                     legend style={draw=none}, legend cell align=left,
+                     ]
+                     \addplot+[mark=none] table[x expr={\thisrowno{0}/1000}] {c/data/Tfirst.dat};
+                     \addlegendentry{\(L = \num{\firstsize}a\)};
+                     \addplot+[mark=none] table[x expr={\thisrowno{0}/1000}] {c/data/Tlast.dat};
+                     \addlegendentry{\(L = \num{\lastsize}a\)};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Temperature as a function of time for the largest and smallest system sizes used. It is clear that the temperature fluctuations decrease with system size, while the equilibration time and equilibrium temperature do not depend on the number of atoms.}
+    \label{fig:temp}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{loglogaxis}[thick,
+            log ticks with fixed point,
+            enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
+            xlabel={\(L/a\)}, ylabel={\(\sigma_T\ \qty[\si{\kelvin}]\)}]
+            \addplot+[mark=none,] table {c/data/stddev.dat};
+        \end{loglogaxis}
+    \end{tikzpicture}
+    \caption{Standard deviation of the total energy as a function of the system size. Both axes are logarithmic, so the linear trend indicates that the fluctuations are proportional to some power of the system size.}\label{fig:tempstddev}
+\end{figure}
+
 
 
 
