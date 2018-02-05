@@ -139,6 +139,13 @@
 \pagestyle{fancy}
 \setcounter{page}{1}
 
+
+
+%   __ _
+%  / _` |
+% | (_| |
+%  \__,_|
+%
 \subsection*{a)}
 I have used the following workflow to see how the velocity distribution evolves with time:
 \begin{itemize}
@@ -229,6 +236,13 @@ The result is
     As the velocity distribution approaches the final distribution, the noise starts dominating the deviation.}\label{fig:logcorrelation}
 \end{figure}
 
+
+%  _
+% | |__
+% | '_ \
+% | |_) |
+% |_.__/
+%
 \openin\infile=b/data/firstdt.dat
 \read\infile to \firstdt
 \closein\infile
@@ -277,6 +291,13 @@ As seen from \vref{fig:energy}, the energy conservation is much worse when a lar
     \caption{Standard deviation of the total energy as a function of the time step.}\label{fig:energystddev}
 \end{figure}
 
+
+
+%   ___
+%  / __|
+% | (__
+%  \___|
+%
 \openin\infile=c/data/firstsize.dat
 \read\infile to \firstsize
 \closein\infile
@@ -339,6 +360,12 @@ Numpy's polyfit function gives the result \(C=\num[round-mode=figures,round-prec
 \end{figure}
 
 
+%      _
+%   __| |
+%  / _` |
+% | (_| |
+%  \__,_|
+%
 \openin\infile=d/data/firstT.dat
 \read\infile to \firstT
 \closein\infile
@@ -387,6 +414,35 @@ Between the runs, the pressure is read from the log file, an equilibration time 
     \end{tikzpicture}
     \caption{Pressure as a function of temperature. The result fits well with the expectation of a linear dependence.}\label{fig:presstemp}
 \end{figure}
+
+
+
+%   ___
+%  / _ \
+% |  __/
+%  \___|
+%
+\subsection*{e)}
+Ideally, the equation of state for the system should be the van der Waal equation of state,
+\[
+    \qty(P+a\qty(\frac{N}{V})^2)\qty(V-Nb) = Nk_\mathrm{B}T\,,
+\]
+which is a modified version of the good ol' ideal gas law, \(PV=Nk_\mathrm{B}T\). The modifications are \(V\to V-Nb\), which represents the fact that the atoms take up some space, and \(P\to P+a\qty(N/V)^2\), which incorporates the added pressure due to collisions.
+Together, these changes make the equation suitable for describing a system where atoms collide elastically, but otherwise do not interact.
+In this part of the project, the atoms are modelled as interacting through short-range conservative forces, which should give a behaviour reasonably closed to the target system of the van der Waal equation of state.
+
+By introducing the density, \(\rho=N/V\), and dividing by \(N\), the equation of state can be rewritten as
+\[
+    \qty(P+a\rho^2)(\rho^{-1}- \rho b) = \rho k_\mathrm{B}T
+    \implies P = \frac{\rho k_\mathrm{B}T}{\rho^{-1}-\rho b} - a\rho^2
+    = \frac{k_\mathrm{B}T}{\rho^{-2}-b} - a\rho^2\,.
+\]
+The parameters \(a\) and \(b\) can be determined through running simulations for many pairs of \(\qty(\rho,T)\).
+A fitting function from scipy determines the coefficients which make the predicted equation of state fit as well as possible with the obtained data.
+
+
+
+
 
 
 
