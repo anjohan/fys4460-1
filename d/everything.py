@@ -33,11 +33,11 @@ for k in tqdm.trange(num_Ts, desc="Running simulations: "):
 
 num_frames = len(t)
 skip = num_frames // 200
-np.savetxt("data/Plast.dat", np.array([t[::skip], T[::skip]]).transpose())
+np.savetxt("data/Plast.dat", np.array([t[::skip], P[::skip]]).transpose())
 
 Ts = Ts[:k]
 Ps = Ps[:k]
-np.savetxt("data/P.dat", np.array([Ts, P]).transpose())
+np.savetxt("data/P.dat", np.array([Ts * units.T0, Ps]).transpose())
 
-np.savetxt("data/firstT.dat", [Ts[0]], fmt="%d")
-np.savetxt("data/lastT.dat", [Ts[-1]], fmt="%d")
+np.savetxt("data/firstT.dat", [Ts[0]], fmt="%.3g")
+np.savetxt("data/lastT.dat", [Ts[-1]], fmt="%.3g")

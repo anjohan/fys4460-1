@@ -3,7 +3,7 @@ dimension 3
 boundary p p p
 atom_style atomic
 
-lattice fcc 0.01
+lattice fcc 1
 region simbox block 0 10 0 10 0 10
 create_box 1 simbox
 

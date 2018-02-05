@@ -149,23 +149,30 @@ I have used the following workflow to see how the velocity distribution evolves 
 \end{itemize}
 When calculating the histograms, I have made sure the same bins are used for all frames by first finding the maximum velocity attained by any atom during the simulation, and then using equally sized bins in the range \(\qty[-v_{\max},v_{\max}]\). One histogram is computed for each direction, and then the average of these is taken.
 
-The correlation is computed by normalising the histograms and taking the dot product with the histogram computed from the final frame. As the velocity distribution approaches the final distribution, the correlation should approach 1.
+The correlation is computed by normalising the histograms and taking the dot product with the histogram computed from the final frame.
+As the velocity distribution approaches the final distribution, the correlation should approach 1.
 
-From \vref{fig:distribution} it is clear that the velocity distribution rapidly changes from a uniform to a gaussian shape. \Vref{fig:correlation} indicates that this happens exponentially, i.e.
+From \vref{fig:distribution} it is clear that the velocity distribution rapidly changes from a uniform to a gaussian shape.
+\Vref{fig:correlation} indicates that this happens exponentially, i.e.
 \[
     C(t) = 1-C_0\exp{-t/\tau}\,,
 \]
-where \(C(t)\) is the correlation, \(C_0\) is the initial correlation and \(\tau\) is a time constant. If this is the case,
+where \(C(t)\) is the correlation, \(C_0\) is the initial correlation and \(\tau\) is a time constant.
+If this is the case,
 \[
     \ln(1-C) = \ln(C_0\exp{-t/\tau}) = \ln(C_0) - t/\tau\,,
 \]
-so when plotted on a logarithmic scale, \(1-C(t)\) should be a linear function with slope \(-1/\tau\). The result is shown in~\vref{fig:logcorrelation}, and while the noise increases as the correlation approaches unity, it is clear from the first half of the graph that the trend is linear, confirming the exponential approach to \(1\).
+so when plotted on a logarithmic scale, \(1-C(t)\) should be a linear function with slope \(-1/\tau\).
+The result is shown in~\vref{fig:logcorrelation}, and while the noise increases as the correlation approaches unity, it is clear from the first half of the graph that the trend is linear, confirming the exponential approach to \(1\).
 
-The time constant, \(\tau\), can thus be estimated by picking out the linear part of the data in \vref{fig:logcorrelation} and finding the slope. While this sounds simple, picking out a linear bit of a graph is hard to program. Fortunately,
+The time constant, \(\tau\), can thus be estimated by picking out the linear part of the data in \vref{fig:logcorrelation} and finding the slope.
+While this sounds simple, picking out a linear bit of a graph is hard to program.
+Fortunately,
 \[
     C(\tau) = 1-C_0\exp{-\tau/\tau} = 1-C_0/\mathrm{e} \implies 1-C(\tau)=C_0/\mathrm{e} \implies \frac{1-C(\tau)}{1-C(0)} = \frac{1}{\mathrm{e}}\,,
 \]
-so the time constant can also be found by checking when \(1-C\) has reached \(1/\mathrm{e}\) of its initial value, which is very simple to program. The result is
+so the time constant can also be found by checking when \(1-C\) has reached \(1/\mathrm{e}\) of its initial value, which is very simple to program.
+The result is
 \openin\infile=a/data/tau.dat
 \read\infile to \timeconstant
 \closein\infile
@@ -189,7 +196,8 @@ so the time constant can also be found by checking when \(1-C\) has reached \(1/
             \addlegendentry{Final}
         \end{axis}
     \end{tikzpicture}
-    \caption{Distribution of particle velocities in the initial and final configurations, as well as after one fifth of the simulation time. The shape changes rapidly from uniform to gaussian.}\label{fig:distribution}
+    \caption{Distribution of particle velocities in the initial and final configurations, as well as after one fifth of the simulation time.
+    The shape changes rapidly from uniform to gaussian.}\label{fig:distribution}
 \end{figure}
 \begin{figure}[htbp]
     \centering
@@ -203,7 +211,8 @@ so the time constant can also be found by checking when \(1-C\) has reached \(1/
         \end{axis}
         \draw[dashed] (B) -- (A) node[below] {\(\tau\)};
     \end{tikzpicture}
-    \caption{Correlation of the velocity distribution as a function of time. The approach to \(1\) appears to be exponential, as confirmed by \vref{fig:logcorrelation}.}\label{fig:correlation}
+    \caption{Correlation of the velocity distribution as a function of time.
+    The approach to \(1\) appears to be exponential, as confirmed by \vref{fig:logcorrelation}.}\label{fig:correlation}
 \end{figure}
 \begin{figure}[htbp]
     \centering
@@ -215,7 +224,9 @@ so the time constant can also be found by checking when \(1-C\) has reached \(1/
             \addplot+[mark=none,] table[x expr={\thisrowno{0}/1000},y expr={1-\thisrowno{1}}] {a/data/velocity_correlation.dat};
         \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{Deviation of the correlation from \(1\), plotted on a logarithmic scale. The linear trend of the first part indicates exponential decay. As the velocity distribution approaches the final distribution, the noise starts dominating the deviation.}\label{fig:logcorrelation}
+    \caption{Deviation of the correlation from \(1\), plotted on a logarithmic scale.
+    The linear trend of the first part indicates exponential decay.
+    As the velocity distribution approaches the final distribution, the noise starts dominating the deviation.}\label{fig:logcorrelation}
 \end{figure}
 
 \openin\infile=b/data/firstdt.dat
@@ -225,11 +236,15 @@ so the time constant can also be found by checking when \(1-C\) has reached \(1/
 \read\infile to \lastdt
 \closein\infile
 \subsection*{b)}
-In order to find the time dependence of the total energy (which should be constant in an NVE-system) as well as the fluctuations, I have made a simple python script which goes through a set of time steps and runs a LAMMPS script for each time step. Between the runs, the energy is read from the log file and the standard deviation is calculated.
+In order to find the time dependence of the total energy (which should be constant in an NVE-system) as well as the fluctuations, I have made a simple python script which goes through a set of time steps and runs a LAMMPS script for each time step.
+Between the runs, the energy is read from the log file and the standard deviation is calculated.
 
-The time step starts at \(\Delta t = \num[round-mode=figures,round-precision=1]{\firstdt}t_0\), where \(t_0\) is the characteristic time for argon. As the time step is gradually increased, the system starts losing atoms, causing the simulation to crash. The largest time step used is \(\Delta t = \num[round-mode=figures,round-precision=2]{\lastdt}t_0\).
+The time step starts at \(\Delta t = \num[round-mode=figures,round-precision=1]{\firstdt}t_0\), where \(t_0\) is the characteristic time for argon.
+As the time step is gradually increased, the system starts losing atoms, causing the simulation to crash.
+The largest time step used is \(\Delta t = \num[round-mode=figures,round-precision=2]{\lastdt}t_0\).
 
-As seen from \vref{fig:energy}, the energy conservation is much worse when a large time step is used. \Vref{fig:energystddev} is an attempt at quantifying the effect of the time step, but the results are hard to interpret.
+As seen from \vref{fig:energy}, the energy conservation is much worse when a large time step is used.
+\Vref{fig:energystddev} is an attempt at quantifying the effect of the time step, but the results are hard to interpret.
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
@@ -272,16 +287,21 @@ As seen from \vref{fig:energy}, the energy conservation is much worse when a lar
 \read\infile to \Lpower
 \closein\infile
 \subsection*{c)}
-In order to find the time dependence of the temperature as well as the fluctuations, I have made a simple python script which goes through a set of system sizes and runs a LAMMPS script for each system size. Between the runs, the temperature is read from the log file and the standard deviation is calculated.
+In order to find the time dependence of the temperature as well as the fluctuations, I have made a simple python script which goes through a set of system sizes and runs a LAMMPS script for each system size.
+Between the runs, the temperature is read from the log file and the standard deviation is calculated.
 
-The size starts at \(L_x=L_y=L_z = \num{\firstsize}a\), where \(a\) is the chosen initial unit cell size for argon. The largest size used is \(L_x=L_y=L_z= \num{\lastsize}a\).
+The size starts at \(L_x=L_y=L_z = \num{\firstsize}a\), where \(a\) is the chosen initial unit cell size for argon.
+The largest size used is \(L_x=L_y=L_z= \num{\lastsize}a\).
 
-\Vref*{fig:temp} shows the temperature as a function of time for the smallest and largest system sizes. While the equilibrium temperature and equilibration time are the same, the fluctuations are much greater when the system is smaller. \Vref{fig:tempstddev} shows the standard deviation as a function of system size. Note the logarithmic scale on both axes.
+\Vref*{fig:temp} shows the temperature as a function of time for the smallest and largest system sizes.
+While the equilibrium temperature and equilibration time are the same, the fluctuations are much greater when the system is smaller.
+\Vref{fig:tempstddev} shows the standard deviation as a function of system size.
+Note the logarithmic scale on both axes.
 
 The linear trend of \(\ln(\sigma_T)\) as a function of \(\ln(L)\) indicates that the fluctuations are proportional to some power of the system size, as
 \[
-    \ln(\sigma_T) = C\ln(L) + D = \ln(L^C) + D \implies \sigma_T = \exp{C\ln(L)+D}
-    = \exp{D}\qty(\exp{\ln(L)})^C = \exp{D}L^C \propto L^C\,.
+    \ln(\sigma_T) = C\ln(L) + D = \ln(L^C) + D \implies \sigma_T = \exp{\ln(L^C)+D}
+    = \exp{D}\exp{\ln(L^C)} = \exp{D}L^C \propto L^C\,.
 \]
 Numpy's polyfit function gives the result \(C=\num[round-mode=figures,round-precision=3]{\Lpower} \approx -4/3\).
 \begin{figure}[htbp]
@@ -300,7 +320,8 @@ Numpy's polyfit function gives the result \(C=\num[round-mode=figures,round-prec
                      \addlegendentry{\(L = \num{\lastsize}a\)};
         \end{axis}
     \end{tikzpicture}
-    \caption{Temperature as a function of time for the largest and smallest system sizes used. It is clear that the temperature fluctuations decrease with system size, while the equilibration time and equilibrium temperature do not depend on the number of atoms.}
+    \caption{Temperature as a function of time for the largest and smallest system sizes used.
+    It is clear that the temperature fluctuations decrease with system size, while the equilibration time and equilibrium temperature do not depend on the number of atoms.}
     \label{fig:temp}
 \end{figure}
 \begin{figure}[htbp]
@@ -313,10 +334,59 @@ Numpy's polyfit function gives the result \(C=\num[round-mode=figures,round-prec
             \addplot+[mark=none,] table {c/data/stddev.dat};
         \end{loglogaxis}
     \end{tikzpicture}
-    \caption{Standard deviation of the total energy as a function of the system size. Both axes are logarithmic, so the linear trend indicates that the fluctuations are proportional to some power of the system size.}\label{fig:tempstddev}
+    \caption{Standard deviation of the temperature as a function of the system size.
+    Both axes are logarithmic, so the linear trend indicates that the fluctuations are proportional to some power of the system size.}\label{fig:tempstddev}
 \end{figure}
 
 
+\openin\infile=d/data/firstT.dat
+\read\infile to \firstT
+\closein\infile
+\openin\infile=d/data/lastT.dat
+\read\infile to \lastT
+\closein\infile
+\subsection*{d)}
+In order to find the temperature dependence of the pressure, I have made a simple python script which goes through a set of temperatures and runs a LAMMPS script for each temperature.
+Between the runs, the pressure is read from the log file, an equilibration time is found, and the mean pressure after the system has reached equilibrium is calculated.
+
+\Vref*{fig:presstime} shows the pressure as a function of time for the smallest and largest temperatures.
+\Vref{fig:presstemp} shows the pressure as a function of temperature. The result is very linear, as expected from the van der Waals equation of state,
+\[
+    \qty(P+a\qty(\frac{N}{V})^2)\qty(V-Nb) = Nk_\mathrm{B}T\,.
+\]
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle, enlarge x limits=0.05,
+                     enlarge y limits=0.24,
+                     axis y discontinuity=crunch, width=6in,height=3in,
+                     xlabel={\(t\ \qty[\si{\pico\s}]\)}, ylabel={\(P\ \qty[\si{\bar}]\)},
+                     xlabel style={anchor=north west}, ylabel style={anchor=east},
+                     legend style={draw=none,at={(0.9,0.5)}}, legend cell align=left,
+                     ]
+                     \addplot+[mark=none,blue] table[x expr={\thisrowno{0}/1000}, y expr={\thisrowno{1}*1.602e6}] {d/data/Pfirst.dat};
+                     \addlegendentry{\(T = \SI{\firstT}{\kelvin}\)};
+                     \addplot+[mark=none,red] table[x expr={\thisrowno{0}/1000}, y expr={\thisrowno{1}*1.602e6}] {d/data/Plast.dat};
+                     \addlegendentry{\(T = \SI{\lastT}{\kelvin}\)};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Pressure as a function of time for two different temperatures. The shapes of the graphs are approximately the same, but they stabilise at different values.}
+    \label{fig:presstime}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick, xmin=230, ymin=700,
+            axis lines=middle,
+            axis x discontinuity=crunch,
+            axis y discontinuity=crunch,
+            enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
+            xlabel={\(T\ \qty[\si{\kelvin}]\)}, ylabel={\(P \qty[\si{bar}]\)}]
+            \addplot+[mark=none,] table[y expr={\thisrowno{1}*1.602e6}] {d/data/P.dat};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Pressure as a function of temperature. The result fits well with the expectation of a linear dependence.}\label{fig:presstemp}
+\end{figure}
 
 
 
