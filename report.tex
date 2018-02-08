@@ -433,9 +433,9 @@ In this part of the project, the atoms are modelled as interacting through short
 
 By introducing the density, \(\rho=N/V\), and dividing by \(N\), the equation of state can be rewritten as
 \[
-    \qty(P+a\rho^2)(\rho^{-1}- \rho b) = \rho k_\mathrm{B}T
-    \implies P = \frac{\rho k_\mathrm{B}T}{\rho^{-1}-\rho b} - a\rho^2
-    = \frac{k_\mathrm{B}T}{\rho^{-2}-b} - a\rho^2\,.
+    \qty(P+a\rho^2)(\rho^{-1}- b) = \rho k_\mathrm{B}T
+    \implies P = \frac{\rho k_\mathrm{B}T}{\rho^{-1}-b} - a\rho^2
+    = \rho^2\qty(\frac{k_\mathrm{B}T}{1-\rho b} - a)\,.
 \]
 The parameters \(a\) and \(b\) can be determined through running simulations for many pairs of \(\qty(\rho,T)\).
 A fitting function from scipy determines the coefficients which make the predicted equation of state fit as well as possible with the obtained data.
