@@ -35,9 +35,9 @@ num_frames = len(t)
 skip = num_frames // 200
 np.savetxt("data/Plast.dat", np.array([t[::skip], P[::skip]]).transpose())
 
-Ts = Ts[:k]
+Ts = Ts[:k] * units.T0
 Ps = Ps[:k]
-np.savetxt("data/P.dat", np.array([Ts * units.T0, Ps]).transpose())
+np.savetxt("data/P.dat", np.array([Ts, Ps]).transpose())
 
 np.savetxt("data/firstT.dat", [Ts[0]], fmt="%.3g")
 np.savetxt("data/lastT.dat", [Ts[-1]], fmt="%.3g")

@@ -7,6 +7,7 @@ class UnitClass:
         self.T0 = 119.74  # K
         self.v0 = self.L0 / self.t0  # Å/fs
         self.P0 = self.F0 / (self.L0**2)  # eV/Å^2
+        self.k_B = self.E0 / self.T0  # eV/K
 
 
 units = UnitClass()

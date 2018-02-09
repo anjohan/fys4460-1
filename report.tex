@@ -324,7 +324,12 @@ The linear trend of \(\ln(\sigma_T)\) as a function of \(\ln(L)\) indicates that
     \ln(\sigma_T) = C\ln(L) + D = \ln(L^C) + D \implies \sigma_T = \exp{\ln(L^C)+D}
     = \exp{D}\exp{\ln(L^C)} = \exp{D}L^C \propto L^C\,.
 \]
-Numpy's polyfit function gives the result \(C=\num[round-mode=figures,round-precision=3]{\Lpower} \approx -4/3\).
+Numpy's polyfit function gives the result \(C=\num[round-mode=figures,round-precision=3]{\Lpower} \approx -3/2\). This can be rewritten as
+\[
+    \sigma_T \propto \frac{1}{L^{3/2}} \propto
+    \frac{1}{\qty(N^{1/3})^{3/2}} = \frac{1}{\sqrt{N}}\,,
+\]
+which is a known theoretical result.
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
