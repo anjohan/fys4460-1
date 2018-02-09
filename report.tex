@@ -408,7 +408,7 @@ Between the runs, the pressure is read from the log file, an equilibration time 
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
-        \begin{axis}[thick, xmin=230, ymin=700,
+        \begin{axis}[thick,
             axis lines=middle,
             axis x discontinuity=crunch,
             axis y discontinuity=crunch,
@@ -445,6 +445,20 @@ By introducing the density, \(\rho=N/V\), and dividing by \(N\), the equation of
 The parameters \(a\) and \(b\) can be determined through running simulations for many pairs of \(\qty(\rho,T)\).
 A fitting function from scipy determines the coefficients which make the predicted equation of state fit as well as possible with the obtained data.
 
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,
+            enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=5in,
+            ylabel={\(T/T_0\)}, xlabel={\(\rho\sigma^3\)}]
+            \addplot3+[mesh,blue] table {e/data/simulated.dat};
+            \addlegendentry{Simulation results};
+            \addplot3+[mesh,red] table {e/data/fitted.dat};
+            \addlegendentry{Fitted data};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Pressure as a function of temperature and density.}\label{fig:presstemp}
+\end{figure}
 
 
 

@@ -1,4 +1,4 @@
-all:
+data/relative_error.dat: ../units.py analyse.py simulate.py
 	mkdir -p data
 	python simulate.py
 	python analyse.py

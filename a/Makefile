@@ -1,4 +1,4 @@
-data/velocity_correlation.dat: velocity_distribution.py data/simulation.in.bin
+data/velocity_correlation.dat: velocity_distribution.py data/simulation.in.bin ../units.py
 	ovitos velocity_distribution.py
 data/simulation.in.bin: in.simulation data/uniformvelocity.data
 	mpirun lmp_mpi -in in.simulation
