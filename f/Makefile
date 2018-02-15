@@ -1,5 +1,5 @@
-all: data/P.dat
+all: data/D.dat
 
-data/P.dat: everything.py in.script ../units.py
+data/D.dat: everything.py in.script ../units.py
 	mkdir -p data
 	python everything.py
