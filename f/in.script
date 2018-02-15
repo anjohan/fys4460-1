@@ -1,0 +1,29 @@
+units lj
+dimension 3
+boundary p p p
+atom_style atomic
+
+lattice fcc 0.01
+region simbox block 0 10 0 10 0 10
+create_box 1 simbox
+
+mass 1 1.0
+pair_style lj/cut 3.0
+pair_coeff 1 1 1.0 1.0 3.0
+
+create_atoms 1 box
+velocity all create ${T} 87287
+fix 1 all nve
+
+dump 1 all custom 100 data/dump.lammpstrj id type x y z vx vy vz
+thermo_style custom step time press temp ke pe etotal
+thermo 1
+
+run 5000
+
+compute msd all msd
+thermo_style custom step time press temp ke pe etotal c_msd[4]
+
+log data/log.msd_${T}
+
+run 25000

@@ -2,8 +2,8 @@ from tqdm import trange
 import os
 import numpy as np
 
-rhos = np.linspace(0.01, 1, 30)
-Ts = np.linspace(1, 3.0, 10)
+rhos = np.linspace(0.01, 1, 20)
+Ts = np.linspace(1, 3.0, 20)
 
 np.savetxt("data/rhos.dat", rhos)
 np.savetxt("data/Ts.dat", Ts)

@@ -7,4 +7,4 @@ all:
 	$(MAKE) report.pdf
 
 report.pdf: report.tex a/data/velocity_correlation.dat b/data/stddev.dat c/data/stddev.dat d/data/P.dat e/data/relative_error.dat
-	rubber -v --pdf report.tex
+	latexmk -pdf

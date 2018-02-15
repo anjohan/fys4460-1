@@ -69,5 +69,5 @@ for filename, values in (("fitted.dat", computed_P.reshape(
                 outfile.write("%g %g %g\n" % (rho, equilibrium_Ts[i, j],
                                               values[i, j]))
             outfile.write("\n")
-np.savetxt("data/a.dat", [a])
-np.savetxt("data/b.dat", [b])
+np.savetxt("data/a.dat", [a], fmt="%g")
+np.savetxt("data/b.dat", [b], fmt="%g")

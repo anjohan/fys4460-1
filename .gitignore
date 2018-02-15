@@ -4,6 +4,7 @@ data/
 log.*
 *.swp
 __pycache__/
+pythontex-files-report/
 
 
 ## Core latex/pdflatex auxiliary files:
