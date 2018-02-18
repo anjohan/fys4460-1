@@ -1,0 +1,12 @@
+set terminal epslatex size 6,5 color colortext
+set output "data/plot.plt"
+
+set xlabel '\(\rho\sigma^3\)'
+set ylabel '\(T/T_0\)'
+set zlabel '\(P/P_0\)'
+
+set format x '\(\num{%g}\)'
+set format y '\(\num{%g}\)'
+set format z '\(\num{%g}\)'
+splot "data/simulated.dat" w l lc "blue" title "Simulation results",\
+    "data/fitted.dat" w l lc "red" title "Fitted data"

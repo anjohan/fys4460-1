@@ -1,5 +1,5 @@
 \documentclass[11pt,british,a4paper]{report}
-\pdfobjcompresslevel=0
+%\pdfobjcompresslevel=0
 \usepackage{pythontex}
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage[includeheadfoot,margin=0.8 in]{geometry}
@@ -8,18 +8,19 @@
 \usepackage{mathtools,upgreek,bigints}
 \usepackage{babel}
 \usepackage{graphicx}
+\graphicspath{{./}{./e/}}
 \usepackage{float}
 \usepackage{amsmath}
-\usepackage{amssymb}
+\usepackage{amssymb,epstopdf}
 %\usepackage{fouriernc}
-\usepackage[T1]{fontenc}
-\usepackage{mathpazo}
-\usepackage{inconsolata}
+% \usepackage[T1]{fontenc}
+% \usepackage{mathpazo}
+% \usepackage{inconsolata}
 %\usepackage{eulervm}
-%\usepackage{fontspec}
-%\usepackage{unicode-math}
-%\setmainfont{Tex Gyre Pagella}
-%\setmathfont{Tex Gyre Pagella Math}
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{Tex Gyre Pagella}
+\setmathfont{Tex Gyre Pagella Math}
 \usepackage{fancyhdr}
 \usepackage[utf8]{inputenc}
 \usepackage{textcomp}
@@ -28,8 +29,9 @@
 \usepackage[linktoc=all, bookmarks=true, pdfauthor={Anders Johansson},pdftitle={FYS4460 Project 1}]{hyperref}
 \usepackage{tikz,pgfplots,pgfplotstable}
 \usepgfplotslibrary{colorbrewer}
+\usepgfplotslibrary{external}
+\tikzexternalize[prefix=data/]
 \pgfplotsset{cycle list/Set1}
-\usetikzlibrary{spy}
 \pgfplotsset{compat=1.8}
 \renewcommand{\CancelColor}{\color{red}}
 \let\oldexp=\exp
@@ -467,7 +469,7 @@ In this domain, the particles spend very little time interacting, corresponding 
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
-        \begin{axis}[thick,view={-45}{30},
+        \begin{axis}[thick,view={30}{30},
             enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=5in,
             ylabel={\(T/T_0\)}, xlabel={\(\rho\sigma^3\)},
             zlabel={\(P/P_0\)}, legend cell align=left,
@@ -478,6 +480,11 @@ In this domain, the particles spend very little time interacting, corresponding 
             \addlegendentry{Fitted data};
         \end{axis}
     \end{tikzpicture}
+    \caption{Pressure as a function of temperature and density.}\label{fig:vanderWaals}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \input{e/data/plot.plt}
     \caption{Pressure as a function of temperature and density.}\label{fig:vanderWaals}
 \end{figure}
 \begin{figure}[htbp]
@@ -494,7 +501,9 @@ In this domain, the particles spend very little time interacting, corresponding 
     \caption{Relative error, \(\abs{\Delta P}/P\).}\label{fig:Perror}
 \end{figure}
 
-
+\clearpage
+\py{2**3}
+hri
 
 
 

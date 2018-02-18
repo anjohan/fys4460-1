@@ -21,11 +21,13 @@ for i, rho in enumerate(tqdm.tqdm(rhos, desc="Densities:".ljust(20))):
         T = data["Temp"]
         num_frames = len(P)
         k = 0
-        while abs(T[-1] - T[k]) > 0.5 * abs(T[0] - T[-1]):
+        initial_deviation = max(
+            map(lambda x: abs(x - T[-1]), T[:num_frames // 10]))
+        while abs(T[-1] - T[k]) > 0.5 * initial_deviation:
             k += 1
         equilibrium_index = 3 * k
-        assert equilibrium_index < (0.8 * num_frames)  # ,\
-        # "Longer simulation needed for rho=%g, T=%g" % (rho, T)
+        assert equilibrium_index < num_frames,\
+            "Longer simulation needed for rho=%g, T=%g" % (rho, Ts[j])
         Ps[i, j] = np.mean(P[equilibrium_index:])
         equilibrium_Ts[i, j] = np.mean(T[equilibrium_index:])
 
