@@ -9,3 +9,7 @@ all:
 
 report.pdf: report.tex a/data/velocity_correlation.dat b/data/stddev.dat c/data/stddev.dat d/data/P.dat e/data/relative_error.dat Makefile e/data/plot.plt
 	latexmk -pdflua -shell-escape
+
+clean:
+	latexmk -c
+	rm -rf __pycache__ pythontex-files-report *.pytxcode *.auxlock

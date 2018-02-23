@@ -1,3 +1,5 @@
+package omp 4
+suffix omp
 log data/log.${rho}_${T}
 units lj
 dimension 3

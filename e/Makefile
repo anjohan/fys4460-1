@@ -4,5 +4,6 @@ data/relative_error.dat: ../units.py analyse.py simulate.py
 	mkdir -p data
 	python simulate.py
 	python analyse.py
+	gnuplot plot.gpi
 data/log.%: run.py in.script
 	@python run.py $*

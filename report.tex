@@ -502,9 +502,42 @@ In this domain, the particles spend very little time interacting, corresponding 
 \end{figure}
 
 \clearpage
-\py{2**3}
-hri
 
+\subsection*{f)}
+The diffusion coefficient is determined by running a simulation for several temperatures, calculating the mean squared displacement and using the known linear time dependence for sufficiently long times,
+\[
+    \langle r^2(t)\rangle = 6Dt\,.
+\]
+The mean squared displacement is calculated by LAMMPs, while ``sufficiently long time'' is determined by looking at the error of a linear fit; the error is first calculated using all the obtained data for \(\langle r^2(t)\rangle\), then more and more of the first time values are ignored until the error has decreased significantly.
+\tikzexternaldisable
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle, enlarge x limits=0.05,
+                     enlarge y limits=0.24,
+                     axis x discontinuity=crunch,
+                     axis y discontinuity=crunch,
+                     width=6in,height=3in,
+                     xlabel={\(t/t_0\)}, ylabel={\(\langle r^2(t)\rangle/\sigma^2\)},
+                     xlabel style={anchor=north west}, ylabel style={anchor=east},
+                     legend style={draw=none,at={(0.9,0.5)}}, legend cell align=left,
+                     ]
+                     \begin{pycode}[msdplot]
+import os
+import re
+files = os.listdir("f/data/")
+for file in files:
+    searchres = re.findall(r"f/data/msd_(.+).dat",file)
+    if len(searchres) != 0:
+        T = searchres[0]
+        print(r"\addplot table {f/data/msd_%s.dat};" % T)
+        print(r"\addlegendentry{\(T/T_0 = %s\)};" % T)
+                     \end{pycode}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Mean squared displacement as a function of time for a few different temperatures.}%
+    \label{fig:msdtime}
+\end{figure}
 
 
 \end{document}
