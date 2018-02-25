@@ -17,17 +17,9 @@ create_atoms 1 box
 velocity all create ${T} 87287
 fix 1 all nvt temp ${T} ${T} 1.0
 
-dump 1 all custom 100 data/dump.lammpstrj id type x y z vx vy vz
+dump 1 all custom 100 data/dump.${T} id type x y z vx vy vz
 thermo_style custom step time press temp ke pe etotal
 thermo 100
+log data/log.${T}
 
-run 5000
-
-reset_timestep 0
-variable mytime equal dt*step
-compute msd all msd
-thermo_style custom step time v_mytime press temp ke pe etotal c_msd[4]
-
-log data/log.msd_${T}
-
-run 25000
+run 10000

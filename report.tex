@@ -412,9 +412,9 @@ Between the runs, the pressure is read from the log file, an equilibration time 
     \centering
     \begin{tikzpicture}
         \begin{axis}[thick,
-            axis lines=middle,
-            axis x discontinuity=crunch,
-            axis y discontinuity=crunch,
+            % axis lines=middle,
+            % axis x discontinuity=crunch,
+            % axis y discontinuity=crunch,
             enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
             xlabel={\(T\ \qty[\si{\kelvin}]\)}, ylabel={\(P \qty[\si{bar}]\)}]
             \addplot+[mark=none,] table[y expr={\thisrowno{1}*1.602e6}] {d/data/P.dat};
@@ -485,7 +485,7 @@ In this domain, the particles spend very little time interacting, corresponding 
 \begin{figure}[htbp]
     \centering
     \input{e/data/plot.plt}
-    \caption{Pressure as a function of temperature and density.}\label{fig:vanderWaals}
+    \caption{Pressure as a function of temperature and density.}\label{fig:vanderWaals2}
 \end{figure}
 \begin{figure}[htbp]
     \centering
@@ -508,36 +508,50 @@ The diffusion coefficient is determined by running a simulation for several temp
 \[
     \langle r^2(t)\rangle = 6Dt\,.
 \]
-The mean squared displacement is calculated by LAMMPs, while ``sufficiently long time'' is determined by looking at the error of a linear fit; the error is first calculated using all the obtained data for \(\langle r^2(t)\rangle\), then more and more of the first time values are ignored until the error has decreased significantly.
+The mean squared displacement is calculated by LAMMPs, while ``sufficiently long time'' is determined by looking at the error of a linear fit; the error is first calculated using all the obtained data for \(\langle r^2(t)\rangle\), then more and more of the first time values are ignored until the error has decreased significantly. A thermostat was used to have more control over the equilibrium temperature.
 \tikzexternaldisable
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
-        \begin{axis}[thick,axis lines=middle, enlarge x limits=0.05,
-                     enlarge y limits=0.24,
-                     axis x discontinuity=crunch,
-                     axis y discontinuity=crunch,
-                     width=6in,height=3in,
+        \begin{axis}[thick,axis lines=middle,
+                     enlarge x limits=0.07,
+                     enlarge y limits=0.06,
+                     width=5in,height=3in,
                      xlabel={\(t/t_0\)}, ylabel={\(\langle r^2(t)\rangle/\sigma^2\)},
-                     xlabel style={anchor=north west}, ylabel style={anchor=east},
-                     legend style={draw=none,at={(0.9,0.5)}}, legend cell align=left,
+                     xlabel style={anchor=north west}, ylabel style={anchor=west},
+                     legend style={draw=none,at={(1.2,1)}}, legend cell align=left,
                      ]
                      \begin{pycode}[msdplot]
-import os
-import re
-files = os.listdir("f/data/")
-for file in files:
-    searchres = re.findall(r"f/data/msd_(.+).dat",file)
-    if len(searchres) != 0:
-        T = searchres[0]
-        print(r"\addplot table {f/data/msd_%s.dat};" % T)
-        print(r"\addlegendentry{\(T/T_0 = %s\)};" % T)
-                     \end{pycode}
+import numpy as np
+Ts = np.loadtxt("f/data/Ts.dat")
+Ts = Ts[::-1]
+for i,T in enumerate(Ts[::len(Ts)//10]):
+    print(r"\addplot table {f/data/msd_%g.dat};" % T)
+    print(r"\addlegendentry{\(T/T_0 = %g\)};" % T)
+                 \end{pycode}
         \end{axis}
     \end{tikzpicture}
-    \caption{Mean squared displacement as a function of time for a few different temperatures.}%
+    \caption{Mean squared displacement as a function of time for a few different initial temperatures. A higher temperature means a higher average kinetic energy, resulting in more motion. For the smallest temperatures, the diffusivity is approximately zero, as the system is in a solid state.}%
     \label{fig:msdtime}
 \end{figure}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,
+            % axis lines=middle,
+            % axis x discontinuity=crunch,
+            % axis y discontinuity=crunch,
+            enlarge x limits=0.05,
+            enlarge y limits=0.2,
+            width=6in,height=3in,
+            xlabel={\(T/T_0\)}, ylabel={\(Dt_0/\sigma^2\)}]
+            \addplot+[mark=none,] table {f/data/D.dat};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Diffusion coefficient as a function of equilibrium temperature. The diffusivity looks to be asymptotically increasing with temperature.}\label{fig:presstemp}
+\end{figure}
+
+\subsection*{g)}
 
 
 \end{document}

@@ -4,7 +4,8 @@ import logplotter
 import numpy as np
 # from units import units
 
-Ts = np.linspace(1, 3., 5)
+Ts = np.linspace(0.2, 3.2, 121)
+np.savetxt("data/Ts.dat", Ts)
 num_Ts = len(Ts)
 Ds = np.zeros(num_Ts)
 eqTs = np.zeros_like(Ts)
@@ -20,7 +21,7 @@ for i, T in enumerate(tqdm.tqdm(Ts, desc="Temperatures:".ljust(20))):
     os.system("make data/log.msd_%g > /dev/null" % T)
     data = logplotter.find_data("data/log.msd_%g" % T)
     msd = np.array(data["c_msd[4]"])
-    t = np.array(data["Time"])
+    t = np.array(data["v_mytime"])
     res = np.array([t, msd]).transpose()
     np.savetxt("data/msd_%g.dat" % T, res)
     eqTs[i] = np.mean(data["Temp"])
@@ -28,7 +29,7 @@ for i, T in enumerate(tqdm.tqdm(Ts, desc="Temperatures:".ljust(20))):
     error = 2 * error0
     num_values = len(t)
     j = 1
-    while error > 0.01 * error0:
+    while error > 0.1 * error0:
         assert j < 0.9 * num_values, "Need more data for T = %g" % T
         a, b, error = aberror(t[j:], msd[j:])
         j += 1
