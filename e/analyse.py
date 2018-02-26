@@ -73,3 +73,7 @@ for filename, values in (("fitted.dat", computed_P.reshape(
             outfile.write("\n")
 np.savetxt("data/a.dat", [a], fmt="%g")
 np.savetxt("data/b.dat", [b], fmt="%g")
+
+np.savetxt("data/simulatedPs.dat", Ps)
+np.savetxt("data/fittedPs.dat", computed_P.reshape((num_rhos, num_Ts)))
+np.savetxt("data/eqTs.dat", equilibrium_Ts)

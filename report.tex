@@ -430,6 +430,11 @@ Between the runs, the pressure is read from the log file, an equilibration time 
 % |  __/
 %  \___|
 %
+\begin{pycode}[NrhoNT]
+import numpy as np
+P = np.loadtxt("e/data/simulatedPs.dat")
+Nrho, NT = P.shape
+\end{pycode}
 \openin\infile=e/data/a.dat
 \read\infile to \aparam
 \closein\infile
@@ -457,14 +462,12 @@ A fitting function from scipy determines the coefficients which make the predict
     a = \num[round-mode=figures]{\aparam}P_0\sigma^6\,,\qquad
     b = \num[round-mode=figures]{\bparam}\sigma^3\,.
 \]
-In~\vref{fig:vanderWaals}, the computed pressure is plotted as a function of temperature and density, together with the van der Waals equation of state with the parameters given above.
-Note that the temperature axis shows the resulting equilibrium temperature, not the initial temperature used by LAMMPs.
+In~\vref{fig:vanderWaals} and~\vref{fig:vanderWaals2}, the computed pressure is plotted as a function of temperature and density, together with the van der Waals equation of state with the parameters given above.
+Note that the temperature axis shows the resulting equilibrium temperature, not the initial temperature used by LAMMPs. A grid of \(\py[NrhoNT]{Nrho}\times\py[NrhoNT]{NT}\) densities and temperatures was used.
 
 For small densities, the theoretical model seems to fit well.
 In this domain, the particles spend very little time interacting, corresponding to the elactic collision model behind the van der Waals equation of state. For large pressures and low temperatures, the effect of interactions increases, causing the simulation results to deviate more from the theoretical predictions.
 \Vref{fig:Perror} quantifies the relative error.
-
-
 
 \begin{figure}[htbp]
     \centering
@@ -484,8 +487,8 @@ In this domain, the particles spend very little time interacting, corresponding 
 \end{figure}
 \begin{figure}[htbp]
     \centering
-    \input{e/data/plot.plt}
-    \caption{Pressure as a function of temperature and density.}\label{fig:vanderWaals2}
+    \includegraphics{e/fig.pdf}
+    \caption{Pressure as a function of temperature and density. The red surface is the simulation result, while the blue surface is the fitted approximation.}\label{fig:vanderWaals2}
 \end{figure}
 \begin{figure}[htbp]
     \centering
@@ -552,6 +555,57 @@ for i,T in enumerate(Ts[::len(Ts)//10]):
 \end{figure}
 
 \subsection*{g)}
+The radial distribution function is easily computed by Ovito, using a CoordinateNumberModifier. \Vref{fig:rdf} and \vref{fig:rdfliquid} show the result for a few different temperatures, as well as for a perfect face-centered cubic (fcc) lattice. The latter is calculated from the initial configuration of atoms. In the fcc lattice, the radial distribution is discrete, as the separation between atoms is sharply defined. When the system is solid, the radial distribution function still has spikes, as all atoms should have approximately the same surroundings, but the spikes are smeared out due to vibrations.
+
+In the liquid phase, there is no long range symmetry, and hence the result is much less spiked. The increase in disorder due to a higher temperature is also clear from the figure. All phases show that no atoms can be closer to each other than a certain distance, and that the concentration of atoms is largest just outside this distance.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle,
+                     enlarge x limits=0.07,
+                     enlarge y limits=0.06,
+                     width=5in,height=3in,
+                     xlabel={\(r/\sigma\)}, ylabel={\(g(r)\)},
+                     xlabel style={anchor=north west}, ylabel style={anchor=west},
+                     legend style={draw=none,at={(1.2,1)}}, legend cell align=left,
+                     ]
+                     \begin{pycode}[msdplot]
+import numpy as np
+Ts = np.loadtxt("g/data/Ts.dat")
+for i,T in enumerate(Ts[:1]):
+    print(r"\addplot table {g/data/rdf_%g.dat};" % T)
+    print(r"\addlegendentry{\(T/T_0 = %g\)};" % T)
+                 \end{pycode}
+            \addplot table {g/data/fccrdf.dat};
+            \addlegendentry{FCC};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Radial distribution function for the solid phase and a perfect face-centered cubic lattice.}%
+    \label{fig:rdf}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle,
+                     enlarge x limits=0.07,
+                     enlarge y limits=0.06,
+                     width=5in,height=3in,
+                     xlabel={\(r/\sigma\)}, ylabel={\(g(r)\)},
+                     xlabel style={anchor=north west}, ylabel style={anchor=west},
+                     legend style={draw=none,at={(1.2,1)}}, legend cell align=left,
+                     ]
+                     \begin{pycode}[msdplot]
+import numpy as np
+Ts = np.loadtxt("g/data/Ts.dat")
+for i,T in enumerate(Ts[1:]):
+    print(r"\addplot table {g/data/rdf_%g.dat};" % T)
+    print(r"\addlegendentry{\(T/T_0 = %g\)};" % T)
+                 \end{pycode}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Radial distribution function for a few different temperatures in the liquid phase.}%
+    \label{fig:rdfliquid}
+\end{figure}
 
 
 \end{document}

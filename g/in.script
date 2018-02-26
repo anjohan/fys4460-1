@@ -6,7 +6,7 @@ boundary p p p
 atom_style atomic
 
 lattice fcc 0.1
-region simbox block 0 10 0 10 0 10
+region simbox block 0 20 0 20 0 20
 create_box 1 simbox
 
 mass 1 1.0

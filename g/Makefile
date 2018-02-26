@@ -1,6 +1,6 @@
-all: data/D.dat
+all: data/fccrdf.dat
 
-data/D.dat: everything.py in.script ../units.py
+data/fccrdf.dat: everything.py in.script ../units.py
 	mkdir -p data
 	ovitos everything.py
 data/log.%: in.script

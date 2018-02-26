@@ -16,7 +16,7 @@ for i, T in enumerate(Ts):
     num_values = len(t)
     pipeline = ovito.io.import_file("data/dump.%g" % T, multiple_frames=True)
     num_frames = pipeline.source.num_frames
-    rdfcalculator = CoordinationNumberModifier(cutoff=10, number_of_bins=200)
+    rdfcalculator = CoordinationNumberModifier(cutoff=6, number_of_bins=400)
     pipeline.modifiers.append(rdfcalculator)
     if i == 0:
         pipeline.compute(0)
@@ -25,10 +25,25 @@ for i, T in enumerate(Ts):
     # Find equilibrium temperature and time
     max_deviation = np.max(np.abs(temp - temp[-1]))
     j = len(temp) - 1
-    while abs(temp[j] - temp[-1]) < 0.5 * max_deviation:
+    while abs(temp[j] - temp[-1]) < 0.2 * max_deviation:
         j -= 1
-    equilibrium_index = 3 * j
+    equilibrium_index = j
     assert equilibrium_index < 0.9 * len(temp),\
         "More data needed for T=%g, %g" % (T, equilibrium_index/len(temp))
     equilibrium_step = data["Step"][equilibrium_index]
     eqTs[i] = np.mean(temp[equilibrium_index:])
+    step = 0
+    j = 0
+    while step < equilibrium_step:
+        step = pipeline.compute(j).attributes["Timestep"]
+        j += 1
+    rdf = np.zeros_like(rdfcalculator.rdf)
+    num_rdfs = 0
+    while j < num_frames:
+        pipeline.compute(j)
+        rdf += rdfcalculator.rdf
+        j += 1
+        num_rdfs += 1
+    rdf /= num_rdfs
+    np.savetxt("data/rdf_%g.dat" % T, rdf)
+np.savetxt("data/eqTs.dat", eqTs)

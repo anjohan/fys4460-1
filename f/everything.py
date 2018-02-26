@@ -4,7 +4,7 @@ import logplotter
 import numpy as np
 # from units import units
 
-Ts = np.linspace(0.2, 3.2, 121)
+Ts = np.linspace(0.2, 3.2, 451)
 np.savetxt("data/Ts.dat", Ts)
 num_Ts = len(Ts)
 Ds = np.zeros(num_Ts)
@@ -29,7 +29,7 @@ for i, T in enumerate(tqdm.tqdm(Ts, desc="Temperatures:".ljust(20))):
     error = 2 * error0
     num_values = len(t)
     j = 1
-    while error > 0.1 * error0:
+    while error > 0.2 * error0:
         assert j < 0.9 * num_values, "Need more data for T = %g" % T
         a, b, error = aberror(t[j:], msd[j:])
         j += 1
