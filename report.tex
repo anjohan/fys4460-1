@@ -416,7 +416,7 @@ Between the runs, the pressure is read from the log file, an equilibration time 
             % axis x discontinuity=crunch,
             % axis y discontinuity=crunch,
             enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=3in,
-            xlabel={\(T\ \qty[\si{\kelvin}]\)}, ylabel={\(P \qty[\si{bar}]\)}]
+            xlabel={\(T\ \qty[\si{\kelvin}]\)}, ylabel={\(P\ \qty[\si{bar}]\)}]
             \addplot+[mark=none,] table[y expr={\thisrowno{1}*1.602e6}] {d/data/P.dat};
         \end{axis}
     \end{tikzpicture}
