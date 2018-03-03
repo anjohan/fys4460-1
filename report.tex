@@ -5,6 +5,11 @@
 \usepackage[includeheadfoot,margin=0.8 in]{geometry}
 \usepackage{siunitx,physics,cancel,upgreek,varioref,listings,booktabs,pdfpages,ifthen,polynom,todonotes}
 %\usepackage{minted}
+\usepackage[backend=biber]{biblatex}
+\DefineBibliographyStrings{english}{%
+      bibliography = {References},
+}
+\addbibresource{sources.bib}
 \usepackage{mathtools,upgreek,bigints}
 \usepackage{babel}
 \usepackage{graphicx}
@@ -551,7 +556,7 @@ for i,T in enumerate(Ts[::len(Ts)//10]):
             \addplot+[mark=none,] table {f/data/D.dat};
         \end{axis}
     \end{tikzpicture}
-    \caption{Diffusion coefficient as a function of equilibrium temperature. The diffusivity looks to be asymptotically increasing with temperature.}\label{fig:presstemp}
+    \caption{Diffusion coefficient as a function of equilibrium temperature. The diffusivity looks to be asymptotically increasing with temperature.}\label{fig:argonD}
 \end{figure}
 
 \subsection*{g)}
@@ -607,5 +612,42 @@ for i,T in enumerate(Ts[1:]):
     \label{fig:rdfliquid}
 \end{figure}
 
+\subsection*{h)}
+According to the internet\cite{lemak_berendsen_1994}, the Berendsen thermostat does not completely simulate the canonical (NVT) ensemble, giving unphysical results for certain measurements. See also the next exercise.
 
+\subsection*{i)}
+The Berendsen thermostat, which models weak interactions with an external heat bath through a rescaling of the velocities, is implemented in LAMMPs through \texttt{fix temp/berendsen}. As seen from \vref{fig:thermostats}, this causes the temperature to approac the target temperature exponentially, with a curve similar to that of an overdamped or critically damped oscillation.
+
+In contrast, the Nosé-Hoover thermostat gives a more natural behaviour for the temperature curve, which looks like an underdamped oscillation. This thermostat is also known to replicate a canonical ensemble\cite{evans_nosehoover_1985}, and it is therefore the default thermostat used in LAMMPs by the \texttt{fix nvt} command.
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle, enlarge x limits=0.05,
+                     enlarge y limits=0.15,
+                     axis y discontinuity=crunch, width=6in,height=3in,
+                     xlabel={\(t/t_0\)}, ylabel={\(T/T_0\)},
+                     xlabel style={anchor=north west}, ylabel style={anchor=east},
+                     legend style={draw=none}, legend cell align=left,
+                     ]
+                     \addplot+[mark=none] table {i/data/T_berendsen.dat};
+                     \addlegendentry{Berendsen};
+                     \addplot+[mark=none] table {i/data/T_nosehoover.dat};
+                     \addlegendentry{Nosé-Hoover};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Temperature as a function of time for the Berendsen and Nosé-Hoover thermostats. With the Berendsen thermostat, the temperature approaches the requested equilibrium temperature exponentially, in an overdamped fashion, while the temperature curve of the Nosé-Hoover thermostat looks underdamped.}%
+    \label{fig:thermostats}
+\end{figure}
+
+
+
+
+
+
+
+
+
+\nocite{*}
+\printbibliography{}
+\addcontentsline{toc}{chapter}{\bibname}
 \end{document}

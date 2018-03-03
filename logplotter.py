@@ -40,7 +40,6 @@ def smooth(y, bredde):
 
 
 if __name__ == "__main__":
-    from matplotlib.pyplot import *
     from argparse import *
 
     parser = ArgumentParser("Skript som plotter filer med log.lammps-format.")
@@ -56,8 +55,11 @@ if __name__ == "__main__":
     parser.add_argument("--smooth", default=0, type=int)
     parser.add_argument("--dump", default=None)
     parser.add_argument("--dumpnum", default=0, type=int)
+    parser.add_argument("--noshow", action="store_true")
 
     args = parser.parse_args()
+    if not args.noshow:
+        from matplotlib.pyplot import *
 
     x = []
     y = []
@@ -74,17 +76,18 @@ if __name__ == "__main__":
         y = smooth(y, args.smooth)
 
     finished_length = min(len(x), len(y))
-    plot(x[:finished_length], y[:finished_length])
-    xlabel(args.x)
-    ylabel(args.y)
-    grid()
-    if not args.s is None:
-        savefig(args.s, bbox_inches="tight")
-    show()
+    x = x[:finished_length]
+    y = y[:finished_length]
+    if not args.noshow:
+        plot(x, y)
+        xlabel(args.x)
+        ylabel(args.y)
+        grid()
+        if not args.s is None:
+            savefig(args.s, bbox_inches="tight")
+        show()
     if not args.dump is None:
-        with open(args.dump, "w") as fil:
-            N = len(x)
-            if args.dumpnum == 0:
-                args.dumpnum = N
-            for i in range(0, N, N / args.dumpnum):
-                fil.write("%g %g\n" % (x[i], y[i]))
+        import numpy as np
+        args.dumpnum = finished_length if args.dumpnum == 0 else args.dumpnum
+        res = np.array([x, y]).transpose()
+        np.savetxt(args.dump, res[::finished_length // args.dumpnum])

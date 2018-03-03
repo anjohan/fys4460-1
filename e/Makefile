@@ -8,4 +8,4 @@ data/relative_error.dat: ../units.py analyse.py simulate.py
 data/log.%: run.py in.script
 	@python run.py $*
 fig.pdf: fig.asy data/relative_error.dat
-	asy fig.asy
+	asy -maxtile "(400,400)" fig.asy
