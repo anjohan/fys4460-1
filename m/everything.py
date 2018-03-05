@@ -26,7 +26,7 @@ for i, T in enumerate(tqdm.tqdm(Ts, desc="Simulating:".ljust(20))):
     p = subprocess.Popen(
         ("make data/log.%g" % T).split(), stdout=subprocess.DEVNULL)
     threads.append(p)
-    if (i % num_threads == 0 and i > 0) or i == num_Ts - 1:
+    if ((i + 1) % num_threads == 0) or i == num_Ts - 1:
         for j in range(i):
             threads[j].wait()
 
