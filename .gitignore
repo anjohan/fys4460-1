@@ -1,3 +1,5 @@
+output_ttree
+*.data
 *.pdf
 data/
 *.restart

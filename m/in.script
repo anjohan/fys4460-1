@@ -1,0 +1,15 @@
+include "spce-water-system.in"
+timestep 1.0
+dump 1 all custom 10 data/dump.${T} id mol type x y z ix iy iz
+fix fxnpt all npt temp ${T} ${T} 100.0 iso 1.0 1.0 1000.0 drag 1.0
+
+run 2000
+
+reset_timestep 0
+# Run simulation
+compute msd all msd com yes
+variable mytime equal dt*step
+log data/log.${T}
+thermo          10
+thermo_style custom step time press temp ke pe etotal cpuremain spcpu c_msd[4] v_mytime vol
+run             4000

@@ -616,9 +616,11 @@ for i,T in enumerate(Ts[1:]):
 According to the internet\cite{lemak_berendsen_1994}, the Berendsen thermostat does not completely simulate the canonical (NVT) ensemble, giving unphysical results for certain measurements. See also the next exercise.
 
 \subsection*{i)}
-The Berendsen thermostat, which models weak interactions with an external heat bath through a rescaling of the velocities, is implemented in LAMMPs through \texttt{fix temp/berendsen}. As seen from \vref{fig:thermostats}, this causes the temperature to approac the target temperature exponentially, with a curve similar to that of an overdamped or critically damped oscillation.
+The Berendsen thermostat, which models weak interactions with an external heat bath through a rescaling of the velocities, is implemented in LAMMPs through \texttt{fix temp/berendsen}.
+As seen from \vref{fig:thermostats}, this causes the temperature to approac the target temperature exponentially, with a curve similar to that of an overdamped or critically damped oscillation.
 
-In contrast, the Nosé-Hoover thermostat gives a more natural behaviour for the temperature curve, which looks like an underdamped oscillation. This thermostat is also known to replicate a canonical ensemble\cite{evans_nosehoover_1985}, and it is therefore the default thermostat used in LAMMPs by the \texttt{fix nvt} command.
+In contrast, the Nosé-Hoover thermostat gives a more natural behaviour for the temperature curve, which looks like an underdamped oscillation.
+This thermostat is also known to replicate a canonical ensemble\cite{evans_nosehoover_1985}, and it is therefore the default thermostat used in LAMMPs by the \texttt{fix nvt} command.
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
@@ -635,13 +637,138 @@ In contrast, the Nosé-Hoover thermostat gives a more natural behaviour for the 
                      \addlegendentry{Nosé-Hoover};
         \end{axis}
     \end{tikzpicture}
-    \caption{Temperature as a function of time for the Berendsen and Nosé-Hoover thermostats. With the Berendsen thermostat, the temperature approaches the requested equilibrium temperature exponentially, in an overdamped fashion, while the temperature curve of the Nosé-Hoover thermostat looks underdamped.}%
+    \caption{Temperature as a function of time for the Berendsen and Nosé-Hoover thermostats.
+    With the Berendsen thermostat, the temperature approaches the requested equilibrium temperature exponentially, in an overdamped fashion, while the temperature curve of the Nosé-Hoover thermostat looks underdamped.}%
     \label{fig:thermostats}
 \end{figure}
 
+\subsection*{j)}
+The two particle interaction in the Stillinger-Weber potential is
+\[
+    V(r_{ij}) = \begin{cases}A\varepsilon\qty(B\qty(\frac{\sigma}{r_{ij}})^p - \qty(\frac{\sigma}{r_{ij}})^q)\cdot\exp{\sigma/\qty(r_{ij}-a\sigma)}\,, & r < a\sigma\\ 0\,, & r\geq a\sigma \end{cases}
+\]
+while the Lennard-Jones potential is
+\[
+    V(r_{ij}) = \begin{cases}4\varepsilon \qty({\qty(\frac{\sigma}{r_{ij}})}^{12} - {\qty(\frac{\sigma}{r_{ij}})}^6)\,, & r < 3\sigma\\ 0\,, & r\geq3\sigma\end{cases}
+\]
+These look fairly similar, however the parameter \(q\) is zero\cite{stillinger_computer_1985} and \(p=4\). For small distances, where the potentials are repulsive, they behave similarly, as they blow up as \(1/r^4\) and \(1/r^{12}\). The attractive parts are however different, as the Stillinger-Weber term \(\oldexp(\sigma/\qty(r-a\sigma))\) decays much faster than Lennard-Jones's \(1/r^6\). Additionally, the Stillinger-Weber term is exactly zero at the cutoff, so the potential does not have to be shifted, as opposed to the Lennard-Jones term.
+
+\subsection*{k)}
+Done.
+
+\subsection*{l)}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle,
+                     enlarge x limits=0.07,
+                     enlarge y limits=0.06,
+                     width=5in,height=3in,
+                     xlabel={\(t\ \qty[\si{\pico\s}]\)}, ylabel={\(\langle r^2(t)\rangle\ \qty[\si{\angstrom\squared}]\)},
+                     xlabel style={anchor=north west}, ylabel style={anchor=west},
+                     legend style={draw=none,at={(1.2,1)}}, legend cell align=left,
+                     ]
+                     \begin{pycode}[msdplotsi]
+import numpy as np
+Ts = np.loadtxt("l/data/Ts.dat")
+Ts = Ts[::-1]
+eqTs = np.loadtxt("l/data/eqTs.dat")[::-1]
+for i in range(0,len(Ts),max(1,len(Ts)//10)):
+    print(r"\addplot table {l/data/msd_%g.dat};" % Ts[i])
+    print(r"\addlegendentry{\(T = \SI{%d}{\kelvin}\)};" % eqTs[i])
+                 \end{pycode}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Mean squared displacement in silicon as a function of time for a few different equilibrium temperatures. A higher temperature means a higher average kinetic energy, resulting in more motion. For the smallest temperatures, the diffusivity is approximately zero, as the system is in a solid state.}%
+    \label{fig:msdtimesi}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,
+            % axis lines=middle,
+            % axis x discontinuity=crunch,
+            % axis y discontinuity=crunch,
+            enlarge x limits=0.05,
+            enlarge y limits=0.2,
+            width=6in,height=3in,
+            xlabel={\(T\ \qty[\si{\kelvin}]\)}, ylabel={\(D\ \qty[\si{\angstrom\squared\per\pico\second}]\)}]
+            \addplot+[mark=none,] table {l/data/D.dat};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Diffusion coefficient of silicon as a function of equilibrium temperature. The diffusivity looks to be asymptotically increasing with temperature.}\label{fig:siD}
+\end{figure}
 
 
+\subsection*{m)}
 
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle,
+                     enlarge x limits=0.07,
+                     enlarge y limits=0.06,
+                     width=5in,height=3in,
+                     xlabel={\(t\ \qty[\si{\femto\s}]\)}, ylabel={\(\langle r^2(t)\rangle\ \qty[\si{\angstrom\squared}]\)},
+                     xlabel style={anchor=north west}, ylabel style={anchor=west},
+                     legend style={draw=none,at={(1.2,1)}}, legend cell align=left,
+                     ]
+                     \begin{pycode}[msdploth2o]
+import numpy as np
+Ts = np.loadtxt("m/data/Ts.dat")
+Ts = Ts[::-1]
+eqTs = np.loadtxt("m/data/eqTs.dat")[::-1]
+for i in range(0,len(Ts),max(1,len(Ts)//10)):
+    print(r"\addplot table {m/data/msd_%g.dat};" % Ts[i])
+    print(r"\addlegendentry{\(T = \SI{%d}{\kelvin}\)};" % eqTs[i])
+                 \end{pycode}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Mean squared displacement for water as a function of time for a few different equilibrium temperatures. A higher temperature means a higher average kinetic energy, resulting in more motion. For the smallest temperatures, the diffusivity is approximately zero, as the system is in a solid state.}%
+    \label{fig:msdtimeh2o}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,
+            % axis lines=middle,
+            % axis x discontinuity=crunch,
+            % axis y discontinuity=crunch,
+            enlarge x limits=0.05,
+            enlarge y limits=0.2,
+            width=6in,height=3in,
+            xlabel={\(T\ \qty[\si{\kelvin}]\)}, ylabel={\(D\ \qty[\si{\angstrom\squared\per\femto\second}]\)}]
+            \addplot+[mark=none,] table {m/data/D.dat};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Diffusion coefficient for water as a function of equilibrium temperature. The diffusivity looks to be asymptotically increasing with temperature.}\label{fig:h2oD}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[thick,axis lines=middle,
+                     enlarge x limits=0.07,
+                     enlarge y limits=0.06,
+                     width=5in,height=3in,
+                     xlabel={\(r\ \qty[\si{\angstrom}]\)}, ylabel={\(g(r)\)},
+                     xlabel style={anchor=north west}, ylabel style={anchor=west},
+                     legend style={draw=none,at={(1.2,1)}}, legend cell align=left,
+                     ]
+                     \begin{pycode}[h2ordf]
+import numpy as np
+Ts = np.loadtxt("m/data/Ts.dat")
+eqTs = np.loadtxt("m/data/eqTs.dat")
+indices = np.loadtxt("m/data/rdfindices.dat",dtype=int)
+for i in indices:
+    print(r"\addplot table {m/data/rdf_%g.dat};" % Ts[i])
+    print(r"\addlegendentry{\(T = \SI{%d}{\kelvin}\)};" % eqTs[i])
+                 \end{pycode}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Radial oxygen-oxygen distribution in water function for a few different temperatures.}%
+    \label{fig:rdfh2o}
+\end{figure}
 
 
 
