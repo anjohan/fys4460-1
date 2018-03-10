@@ -1,3 +1,4 @@
+import tqdm
 import ovito
 from ovito.modifiers import CoordinationNumberModifier
 import os
@@ -9,8 +10,8 @@ np.savetxt("data/Ts.dat", Ts)
 num_Ts = len(Ts)
 eqTs = np.zeros_like(Ts)
 
-for i, T in enumerate(Ts):
-    os.system("make data/log.%g" % T)
+for i, T in enumerate(tqdm.tqdm(Ts)):
+    os.system("make data/log.%g > /dev/null" % T)
     data = logplotter.find_data("data/log.%g" % T)
     t = np.array(data["Time"])
     num_values = len(t)

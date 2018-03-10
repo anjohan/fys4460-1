@@ -500,7 +500,7 @@ In this domain, the particles spend very little time interacting, corresponding 
     \begin{tikzpicture}
         \begin{axis}[thick,view={0}{90}, colorbar,
             colorbar style={ylabel={\(\abs{\Delta P}/P\)},ymode=log},
-            enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=5in,
+            enlarge x limits=0.05, enlarge y limits=0.1,width=6in,height=4in,
             ylabel={\(T/T_0\)}, xlabel={\(\rho\sigma^3\)},
             ]
             \addplot3+[surf] table {e/data/relative_error.dat};
@@ -651,12 +651,17 @@ while the Lennard-Jones potential is
 \[
     V(r_{ij}) = \begin{cases}4\varepsilon \qty({\qty(\frac{\sigma}{r_{ij}})}^{12} - {\qty(\frac{\sigma}{r_{ij}})}^6)\,, & r < 3\sigma\\ 0\,, & r\geq3\sigma\end{cases}
 \]
-These look fairly similar, however the parameter \(q\) is zero\cite{stillinger_computer_1985} and \(p=4\). For small distances, where the potentials are repulsive, they behave similarly, as they blow up as \(1/r^4\) and \(1/r^{12}\). The attractive parts are however different, as the Stillinger-Weber term \(\oldexp(\sigma/\qty(r-a\sigma))\) decays much faster than Lennard-Jones's \(1/r^6\). Additionally, the Stillinger-Weber term is exactly zero at the cutoff, so the potential does not have to be shifted, as opposed to the Lennard-Jones term.
+These look fairly similar, however the parameter \(q\) is zero\cite{stillinger_computer_1985} and \(p=4\). For small distances, where the potentials are repulsive, they behave similarly, as they blow up as \(1/r^4\) and \(1/r^{12}\). The attractive parts are more different, as the Stillinger-Weber term \(\oldexp(\sigma/\qty(r-a\sigma))\) decays much faster than Lennard-Jones's \(1/r^6\). Additionally, the Stillinger-Weber term is exactly zero at the cutoff, so the potential does not have to be shifted, as opposed to the Lennard-Jones term.
+
+In addition to the two body term, the Stillinger-Weber potential has a three body term, as opposed to the Lennard Jones potential. This term increases the energy when angles deviate from the idealized tetrahedral angle.
 
 \subsection*{k)}
 Done.
 
 \subsection*{l)}
+The same machinery as for argon is used to measure the mean squared displacements shown in~\vref{fig:msdtimesi} and the diffusion coefficient shown in~\vref{fig:siD}. There is a clear phase transition around \(T=\SI{2400}{\kelvin}\), where the diffusivity is almost discontinuous. When the temperature is lower than this, the diffusivity is zero, as the silicon is solid, while the diffusivity increases linearly in the liquid phase.
+
+One unfortunate, but apparently normal\footnote{\url{http://lammps.sandia.gov/threads/msg60488.html}}, result, is that the melting temperature is much higher than the experimental value.
 
 \begin{figure}[htbp]
     \centering
@@ -697,7 +702,7 @@ for i in range(0,len(Ts),max(1,len(Ts)//10)):
             \addplot+[mark=none,] table {l/data/D.dat};
         \end{axis}
     \end{tikzpicture}
-    \caption{Diffusion coefficient of silicon as a function of equilibrium temperature. The diffusivity looks to be asymptotically increasing with temperature.}\label{fig:siD}
+    \caption{Diffusion coefficient of silicon as a function of equilibrium temperature. The diffusivity is practically zero when silicon is in a solid state, but increases almost discontinuously when the melting temperature is reached. In liquid silicon, diffusivity increases linearly with temperature.}\label{fig:siD}
 \end{figure}
 
 
@@ -742,7 +747,7 @@ for i in range(0,len(Ts),max(1,len(Ts)//10)):
             \addplot+[mark=none,] table {m/data/D.dat};
         \end{axis}
     \end{tikzpicture}
-    \caption{Diffusion coefficient for water as a function of equilibrium temperature. The diffusivity looks to be asymptotically increasing with temperature.}\label{fig:h2oD}
+    \caption{Diffusion coefficient for water as a function of equilibrium temperature. The diffusivity looks to be approximately linearly increasing when the temperature is above \(\SI{300}{\kelvin}\).}\label{fig:h2oD}
 \end{figure}
 \begin{figure}[htbp]
     \centering

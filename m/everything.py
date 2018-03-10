@@ -27,7 +27,7 @@ for i, T in enumerate(tqdm.tqdm(Ts, desc="Simulating:".ljust(20))):
         ("make data/log.%g" % T).split(), stdout=subprocess.DEVNULL)
     threads.append(p)
     if ((i + 1) % num_threads == 0) or i == num_Ts - 1:
-        for j in range(i):
+        for j in range((i+1)):
             threads[j].wait()
 
 for i, T in enumerate(tqdm.tqdm(Ts, desc="MSD:".ljust(20))):
