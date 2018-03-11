@@ -1,5 +1,4 @@
-import pdb
-from units import units
+import time
 import logplotter
 import tqdm
 import numpy as np
@@ -52,14 +51,27 @@ def vanderWaal(rhos_and_Ts, a, b):
 
 
 print("Finding parameters...")
-params, covariancestuff = curve_fit(
-    vanderWaal, [rhos, equilibrium_Ts.ravel()], flat_Ps, p0=(1.2, 0.1))
-print(params, covariancestuff)
+smallest_error = float("inf")
+a, b = 0, 0
+t0 = time.time()
+while time.time() - t0 < 600:
+    a0, b0 = np.random.uniform(1E-10, 10, size=2)
+    params, covariancestuff = curve_fit(
+        vanderWaal, [rhos, equilibrium_Ts.ravel()], flat_Ps, p0=(a0, b0))
 
-a, b = params
-print("a = %g, b = %g" % (a, b))
-computed_P = vanderWaal([rhos, equilibrium_Ts.ravel()], a, b)
-relative_error = np.abs((computed_P - flat_Ps) / flat_Ps)
+    atmp, btmp = params
+    computed_Ptmp = vanderWaal([rhos, equilibrium_Ts.ravel()], atmp, btmp)
+    absolute_errortmp = np.abs((computed_Ptmp - flat_Ps))
+    error = np.sum(absolute_errortmp)
+    print("Trying a0 = %8g, b0 = %8g, result: a = %8g, b = %8g, error = %8g" %
+          (a0, b0, atmp, btmp, error))
+    if error < smallest_error:
+        smallest_error = error
+        a, b = atmp, btmp
+        computed_P = computed_Ptmp
+        absolute_error = absolute_errortmp
+
+relative_error = np.abs(absolute_error / flat_Ps)
 
 for filename, values in (("fitted.dat", computed_P.reshape(
     (num_rhos, num_Ts))), ("simulated.dat", Ps), ("relative_error.dat",

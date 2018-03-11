@@ -35,5 +35,5 @@ triple fittedP(pair ij){
 }
 
 surface graf2 = surface(fittedP, (0,0), (num_rhos-1,num_Ts-1),nu=num_rhos,nv=num_Ts);
-draw(graf2,material(blue+0.2*white+opacity(myopacity)));
+draw(graf2,surfacepen=material(blue+0.2*white+opacity(myopacity)),meshpen=black);
 axes3("$\rho\sigma^3$","$T/T_0$","$P/P_0$",min=(-0.2,-0.2,-0.2),max=(1.2,3.7,12),arrow=Arrow3());

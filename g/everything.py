@@ -5,7 +5,7 @@ import os
 import logplotter
 import numpy as np
 
-Ts = np.array([0.2, 1, 1.5, 2])
+Ts = np.array([0.2, 2, 5, 10])
 np.savetxt("data/Ts.dat", Ts)
 num_Ts = len(Ts)
 eqTs = np.zeros_like(Ts)

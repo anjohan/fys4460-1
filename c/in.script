@@ -4,7 +4,8 @@ boundary p p p
 atom_style atomic
 
 lattice fcc 0.01
-region simbox block 0 ${size} 0 ${size} 0 ${size}
+variable constsize equal 5
+region simbox block 0 ${size} 0 ${constsize} 0 ${constsize}
 create_box 1 simbox
 
 mass 1 1.0

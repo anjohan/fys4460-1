@@ -15,8 +15,9 @@ all:
 	$(MAKE) report.pdf
 
 report.pdf: report.tex a/data/velocity_correlation.dat b/data/stddev.dat c/data/stddev.dat d/data/P.dat e/data/relative_error.dat Makefile e/data/plot.plt f/data/D.dat e/fig.pdf g/data/fccrdf.dat i/data/T_berendsen.dat i/data/T_nosehoover.dat l/data/D.dat m/data/D.dat sources.bib
-	latexmk -pdflua -shell-escape
+	mkdir -p data
+	latexmk -pdflua -shell-escape report
 
 clean:
 	latexmk -c
-	rm -rf __pycache__ pythontex-files-report *.pytxcode *.auxlock report.pdf *.run.xml
+	rm -rf __pycache__ pythontex-files-report *.pytxcode *.auxlock report.pdf *.run.xml data

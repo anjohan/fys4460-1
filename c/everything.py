@@ -4,7 +4,7 @@ import logplotter
 import numpy as np
 from units import units
 
-sizes = np.arange(5, 16, 1)
+sizes = np.arange(3, 31, 1)
 num_sizes = len(sizes)
 stddev = np.zeros(num_sizes)
 T0 = 2.5
