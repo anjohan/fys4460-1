@@ -20,4 +20,4 @@ report.pdf: report.tex a/data/velocity_correlation.dat b/data/stddev.dat c/data/
 
 clean:
 	latexmk -c
-	rm -rf __pycache__ pythontex-files-report *.pytxcode *.auxlock report.pdf *.run.xml data
+	rm -rf __pycache__ pythontex-files-report *.pytxcode *.auxlock *.run.xml
